@@ -52,7 +52,7 @@ pub use crate::{
     tx::Tx,
 };
 
-pub use cosmos_sdk_proto::{self as proto, Any};
+pub use ibc_proto::{self as proto, google::protobuf::Any};
 pub use eyre::Report as ErrorReport;
 pub use tendermint;
 
