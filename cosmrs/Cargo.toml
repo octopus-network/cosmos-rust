@@ -37,7 +37,18 @@ getrandom = { version = "0.2", features = ["js"] }
 hex-literal = "0.3"
 
 [features]
-default   = ["bip32"]
+default   = ["std"]
+std = [
+    "ibc-proto/std",
+    "prost/std",
+    "ecdsa/std",
+    "serde/std",
+    "serde_json/std",
+    "subtle-encoding/std",
+    "tendermint/std",
+    "displaydoc/std",
+    "bip32/std",
+]
 cosmwasm  = ["ibc-proto/cosmwasm"]
 dev       = ["rpc", "tokio"]
 client    = ["ibc-proto/client"]
