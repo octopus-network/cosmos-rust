@@ -5,6 +5,7 @@ use crate::{
     proto::{self, traits::MessageExt},
     Error, ErrorReport, Result,
 };
+use alloc::format;
 use alloc::vec::Vec;
 
 /// [`AuthInfo`] describes the fee and signer modes that are used to sign a transaction.
@@ -33,7 +34,9 @@ impl AuthInfo {
 
     /// Encode this type using Protocol Buffers.
     pub fn into_bytes(self) -> Result<Vec<u8>> {
-        Ok(self.into_proto().to_bytes()?)
+        self.into_proto()
+            .to_bytes()
+            .map_err(|e| eyre::eyre!(format!("{}", e)))
     }
 }
 

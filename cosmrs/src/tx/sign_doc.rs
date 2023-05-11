@@ -6,6 +6,7 @@ use crate::{
     proto::{self, traits::MessageExt},
     Result,
 };
+use alloc::format;
 use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec;
@@ -57,7 +58,9 @@ impl SignDoc {
 
     /// Encode this type using Protocol Buffers.
     pub fn into_bytes(self) -> Result<Vec<u8>> {
-        Ok(self.into_proto().to_bytes()?)
+        self.into_proto()
+            .to_bytes()
+            .map_err(|e| eyre::eyre!(format!("{}", e)))
     }
 
     /// Sign this [`SignDoc`], producing a [`Raw`] transaction.

@@ -4,6 +4,7 @@ use crate::{
     tx::Msg,
     ErrorReport, Result,
 };
+use alloc::format;
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
@@ -25,7 +26,9 @@ pub struct MsgData {
 impl MsgData {
     /// Attempts to decode the `data` field of this result into the specified `Msg` type.
     pub fn try_decode_as<M: Msg>(&self) -> Result<M> {
-        M::Proto::decode(&*self.data)?.try_into()
+        M::Proto::decode(&*self.data)
+            .map_err(|e| eyre::eyre!(format!("{}", e)))?
+            .try_into()
     }
 }
 
@@ -66,7 +69,9 @@ impl TryFrom<Data> for TxMsgData {
     type Error = ErrorReport;
 
     fn try_from(data: Data) -> Result<TxMsgData> {
-        proto::cosmos::base::abci::v1beta1::TxMsgData::decode(data.as_ref())?.try_into()
+        proto::cosmos::base::abci::v1beta1::TxMsgData::decode(data.as_ref())
+            .map_err(|e| eyre::eyre!(format!("{}", e)))?
+            .try_into()
     }
 }
 

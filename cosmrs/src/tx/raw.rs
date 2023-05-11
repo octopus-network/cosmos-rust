@@ -7,6 +7,7 @@ use crate::{
     },
     Result,
 };
+use alloc::format;
 use alloc::vec::Vec;
 
 #[cfg(feature = "rpc")]
@@ -23,12 +24,14 @@ pub struct Raw(proto::cosmos::tx::v1beta1::TxRaw);
 impl Raw {
     /// Deserialize raw transaction from serialized protobuf.
     pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
-        Ok(Raw(Message::decode(bytes)?))
+        Ok(Raw(
+            Message::decode(bytes).map_err(|e| eyre::eyre!(format!("{}", e)))?
+        ))
     }
 
     /// Serialize raw transaction as a byte vector.
     pub fn to_bytes(&self) -> Result<Vec<u8>> {
-        Ok(self.0.to_bytes()?)
+        self.0.to_bytes().map_err(|e| eyre::eyre!(format!("{}", e)))
     }
 
     /// Broadcast this transaction using the provided RPC client

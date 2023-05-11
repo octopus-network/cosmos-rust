@@ -133,6 +133,7 @@ use crate::{
     proto::{self, traits::Message},
     Error, Gas, Result,
 };
+use alloc::format;
 use alloc::vec::Vec;
 
 #[cfg(feature = "rpc")]
@@ -187,7 +188,9 @@ impl TryFrom<&[u8]> for Tx {
     type Error = ErrorReport;
 
     fn try_from(bytes: &[u8]) -> Result<Tx> {
-        proto::cosmos::tx::v1beta1::Tx::decode(bytes)?.try_into()
+        proto::cosmos::tx::v1beta1::Tx::decode(bytes)
+            .map_err(|e| eyre::eyre!(format!("{}", e)))?
+            .try_into()
     }
 }
 
