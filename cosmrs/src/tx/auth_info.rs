@@ -59,6 +59,7 @@ impl From<AuthInfo> for proto::cosmos::tx::v1beta1::AuthInfo {
         proto::cosmos::tx::v1beta1::AuthInfo {
             signer_infos: auth_info.signer_infos.into_iter().map(Into::into).collect(),
             fee: Some(auth_info.fee.into()),
+            // todo (davirain): in ibc proto 0.29.0 version have this fileds
             tip: None,
         }
     }

@@ -89,6 +89,7 @@ impl From<TxMsgData> for proto::cosmos::base::abci::v1beta1::TxMsgData {
     fn from(tx_msg_data: TxMsgData) -> Self {
         proto::cosmos::base::abci::v1beta1::TxMsgData {
             data: tx_msg_data.data.into_iter().map(Into::into).collect(),
+            // todo (davirain): in ibc proto 0.29.0 version have this fileds
             msg_responses: vec![],
         }
     }
