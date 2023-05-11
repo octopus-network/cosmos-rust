@@ -1,7 +1,9 @@
 use crate::{Error, ErrorReport, Result};
-use eyre::WrapErr;
+use alloc::format;
+use alloc::string::String;
+use alloc::vec::Vec;
+use core::{fmt, str::FromStr};
 use serde::{de, de::Error as _, ser, Deserialize, Serialize};
-use std::{fmt, str::FromStr};
 use subtle_encoding::bech32;
 
 /// Account identifiers
@@ -24,8 +26,8 @@ impl AccountId {
         let id = bech32::encode(prefix, bytes);
 
         if !prefix.chars().all(|c| matches!(c, 'a'..='z' | '0'..='9')) {
-            return Err(Error::AccountId { id })
-                .wrap_err("expected prefix to be lowercase alphanumeric characters only");
+            return Err(Error::AccountId { id }
+                .wrap_err("expected prefix to be lowercase alphanumeric characters only".into()));
         }
 
         if matches!(bytes.len(), 1..=Self::MAX_LENGTH) {
@@ -34,13 +36,11 @@ impl AccountId {
                 hrp_length: prefix.len(),
             })
         } else {
-            Err(Error::AccountId { id }).wrap_err_with(|| {
-                format!(
-                    "account ID should be at most {} bytes long, but was {} bytes long",
-                    Self::MAX_LENGTH,
-                    bytes.len()
-                )
-            })
+            Err(Error::AccountId { id }.wrap_err(format!(
+                "account ID should be at most {} bytes long, but was {} bytes long",
+                Self::MAX_LENGTH,
+                bytes.len()
+            )))
         }
     }
 
@@ -79,7 +79,8 @@ impl FromStr for AccountId {
     type Err = ErrorReport;
 
     fn from_str(s: &str) -> Result<Self> {
-        let (hrp, bytes) = bech32::decode(s).wrap_err(format!("invalid bech32: '{}'", s))?;
+        let (hrp, bytes) =
+            bech32::decode(s).map_err(|_| eyre::eyre!(format!("invalid bech32: '{}'", s)))?;
         Self::new(&hrp, &bytes)
     }
 }
@@ -110,8 +111,8 @@ impl TryFrom<&AccountId> for tendermint::account::Id {
             Ok(bytes) => Ok(tendermint::account::Id::new(bytes)),
             _ => Err(Error::AccountId {
                 id: id.bech32.clone(),
-            })
-            .wrap_err_with(|| format!("invalid length for account ID: {}", len)),
+            }
+            .wrap_err(format!("invalid length for account ID: {}", len))),
         }
     }
 }

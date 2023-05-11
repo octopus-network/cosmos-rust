@@ -4,6 +4,8 @@ use crate::{
     proto::{self, traits::MessageExt},
     Any, ErrorReport, Result,
 };
+use alloc::vec::Vec;
+use alloc::{format, string::String};
 use tendermint::block;
 
 /// [`Body`] of a transaction that all signers sign over.
@@ -94,7 +96,10 @@ impl TryFrom<proto::cosmos::tx::v1beta1::TxBody> for Body {
         Ok(Body {
             messages: proto.messages.into_iter().map(Into::into).collect(),
             memo: proto.memo,
-            timeout_height: proto.timeout_height.try_into()?,
+            timeout_height: proto
+                .timeout_height
+                .try_into()
+                .map_err(|e| eyre::eyre!(format!("{}", e)))?,
             extension_options: proto.extension_options,
             non_critical_extension_options: proto.non_critical_extension_options,
         })

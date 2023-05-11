@@ -8,7 +8,9 @@ use crate::{
     },
     Any, Error, ErrorReport, Result,
 };
-use eyre::WrapErr;
+use alloc::borrow::ToOwned;
+use alloc::format;
+use alloc::vec::Vec;
 
 /// Legacy Amino multisig key.
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -58,9 +60,10 @@ impl TryFrom<&Any> for LegacyAminoMultisig {
 
     fn try_from(any: &Any) -> Result<Self> {
         if any.type_url != Self::TYPE_URL {
-            return Err(Error::Crypto).wrap_err_with(|| {
-                format!("invalid type URL for LegacyAminoPubKey: {}", &any.type_url)
-            });
+            return Err(Error::Crypto.wrap_err(format!(
+                "invalid type URL for LegacyAminoPubKey: {}",
+                &any.type_url
+            )));
         }
 
         let proto = proto::cosmos::crypto::multisig::LegacyAminoPubKey::decode(&*any.value)?;

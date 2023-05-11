@@ -133,6 +133,7 @@ use crate::{
     proto::{self, traits::Message},
     Error, Gas, Result,
 };
+use alloc::vec::Vec;
 
 #[cfg(feature = "rpc")]
 use {crate::rpc, tendermint::Hash};

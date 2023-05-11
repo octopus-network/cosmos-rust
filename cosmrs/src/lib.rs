@@ -1,3 +1,4 @@
+#![cfg_attr(not(feature = "std"), no_std)]
 #![doc = include_str!("../README.md")]
 #![doc(
     html_logo_url = "https://raw.githubusercontent.com/cosmos/cosmos-rust/main/.images/cosmos.png"
@@ -26,6 +27,8 @@
 //! - `tendermint`: re-exported as `cosmrs::tendermint`
 //! - `tendermint-rpc`: re-exported as `cosmrs::rpc` (requires `rpc` crate feature)
 
+extern crate alloc;
+
 pub mod abci;
 pub mod auth;
 pub mod bank;
@@ -52,8 +55,8 @@ pub use crate::{
     tx::Tx,
 };
 
-pub use ibc_proto::{self as proto, google::protobuf::Any};
 pub use eyre::Report as ErrorReport;
+pub use ibc_proto::{self as proto, google::protobuf::Any};
 pub use tendermint;
 
 #[cfg(feature = "bip32")]

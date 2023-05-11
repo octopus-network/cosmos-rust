@@ -5,6 +5,7 @@ use crate::{
     proto::{self, traits::MessageExt},
     Error, ErrorReport, Result,
 };
+use alloc::vec::Vec;
 
 /// [`AuthInfo`] describes the fee and signer modes that are used to sign a transaction.
 #[derive(Clone, Debug, Eq, PartialEq)]

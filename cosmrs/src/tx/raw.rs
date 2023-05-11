@@ -7,6 +7,7 @@ use crate::{
     },
     Result,
 };
+use alloc::vec::Vec;
 
 #[cfg(feature = "rpc")]
 use crate::rpc;

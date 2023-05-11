@@ -7,9 +7,12 @@ use crate::{
     },
     AccountId, Any, Error, ErrorReport, Result,
 };
-use eyre::WrapErr;
+use alloc::borrow::ToOwned;
+use alloc::string::ToString;
+use alloc::vec::Vec;
+use alloc::{format, string::String};
+use core::str::FromStr;
 use serde::{Deserialize, Serialize};
-use std::str::FromStr;
 use subtle_encoding::base64;
 
 /// Public keys
@@ -112,8 +115,9 @@ impl TryFrom<&Any> for PublicKey {
             Self::SECP256K1_TYPE_URL => {
                 proto::cosmos::crypto::secp256k1::PubKey::decode(&*any.value)?.try_into()
             }
-            other => Err(Error::Crypto)
-                .wrap_err_with(|| format!("invalid type URL for public key: {}", other)),
+            other => {
+                Err(Error::Crypto.wrap_err(format!("invalid type URL for public key: {}", other)))
+            }
         }
     }
 }
@@ -211,14 +215,13 @@ impl TryFrom<&PublicKeyJson> for PublicKey {
     type Error = ErrorReport;
 
     fn try_from(json: &PublicKeyJson) -> Result<PublicKey> {
-        let pk_bytes = base64::decode(&json.key)?;
+        let pk_bytes = base64::decode(&json.key).map_err(|e| eyre::eyre!(format!("{}", e)))?;
 
         let tm_key = match json.type_url.as_str() {
             Self::ED25519_TYPE_URL => tendermint::PublicKey::from_raw_ed25519(&pk_bytes),
             Self::SECP256K1_TYPE_URL => tendermint::PublicKey::from_raw_secp256k1(&pk_bytes),
             other => {
-                return Err(Error::Crypto)
-                    .wrap_err_with(|| format!("invalid public key @type: {}", other))
+                return Err(Error::Crypto.wrap_err(format!("invalid public key @type: {}", other)))
             }
         };
 

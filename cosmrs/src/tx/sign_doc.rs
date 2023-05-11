@@ -6,6 +6,10 @@ use crate::{
     proto::{self, traits::MessageExt},
     Result,
 };
+use alloc::string::String;
+use alloc::string::ToString;
+use alloc::vec;
+use alloc::vec::Vec;
 use tendermint::chain;
 
 /// [`SignDoc`] is the type used for generating sign bytes for `SIGN_MODE_DIRECT`.

@@ -4,6 +4,9 @@ use crate::{
     tx::Msg,
     ErrorReport, Result,
 };
+use alloc::string::String;
+use alloc::vec;
+use alloc::vec::Vec;
 pub use ibc_proto::google::protobuf::Any;
 
 /// MsgData defines the data returned in a Result object during message execution.
